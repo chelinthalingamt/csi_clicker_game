@@ -7,48 +7,89 @@ kaboom({
 
 // Load assets
 loadSprite("coin", "https://i.imgur.com/wbKxhcd.png");
+loadSprite("gem", "https://i.imgur.com/eT9nZ5K.png");
+loadSprite("star", "https://i.imgur.com/4Q43lX5.png");
 loadSound("click", "https://freesound.org/data/previews/123/123442_512123-lq.mp3");
 
 // Game state
 let clicks = 0;
 let multiplier = 1;
 let rebirths = 0;
+let soundOn = true;
+let language = "en";
+let currentSprite = "coin";
+
+// Language Support
+const translations = {
+  en: {
+    clicks: "Clicks",
+    rebirths: "Rebirths",
+    bonus: "Bonus Unlocked! x2 Multiplier",
+    rebirthMsg: "Rebirth! Multiplier is now x",
+    settings: "Settings: Sound",
+    language: "Language",
+    spriteSelect: "Select Clicker Object"
+  },
+  es: {
+    clicks: "Clics",
+    rebirths: "Renacimientos",
+    bonus: "¡Bono Desbloqueado! Multiplicador x2",
+    rebirthMsg: "¡Renacimiento! El multiplicador ahora es x",
+    settings: "Configuración: Sonido",
+    language: "Idioma",
+    spriteSelect: "Selecciona el objeto de clic"
+  }
+};
 
 // UI elements
 const counter = add([
-  text(`Clicks: ${clicks}`, { size: 32 }),
+  text(`${translations[language].clicks}: 0`, { size: 32 }),
   pos(20, 20),
-  { update() { this.text = `Clicks: ${clicks}`; } }
 ]);
 
 const rebirthCounter = add([
-  text(`Rebirths: ${rebirths}`, { size: 24 }),
+  text(`${translations[language].rebirths}: 0`, { size: 24 }),
   pos(20, 60),
-  { update() { this.text = `Rebirths: ${rebirths}`; } }
 ]);
 
 // Clickable sprite
-const coin = add([
-  sprite("coin"),
+let clicker = add([
+  sprite(currentSprite),
   pos(center()),
   scale(2),
   area(),
   "clickable"
 ]);
 
+// Format numbers for large scales
+function formatNumber(num) {
+  if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+  if (num >= 1e3) return (num / 1e3).toFixed(2) + "K";
+  return num;
+}
+
 // Click event
-coin.onClick(() => {
+clicker.onClick(() => {
   clicks += 1 * multiplier;
-  play("click");
-  coin.scale = vec2(2.2);
-  wait(0.1, () => coin.scale = vec2(2));
+  if (soundOn) play("click");
+  clicker.scale = vec2(2.2);
+  wait(0.1, () => clicker.scale = vec2(2));
+  counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
 });
 
-// Unlock system (passive bonus at 50 clicks)
+// Unlock system (additional upgrades at 100 and 200 clicks)
 loop(1, () => {
   if (clicks >= 50 && multiplier === 1) {
     multiplier = 2;
-    add([text("Bonus Unlocked! x2 Multiplier", { size: 24 }), pos(20, 100)]);
+    add([text(translations[language].bonus, { size: 24 }), pos(20, 100)]);
+  }
+  if (clicks >= 100 && multiplier === 2) {
+    multiplier = 5;
+    add([text("Bonus Unlocked! x5 Multiplier", { size: 24 }), pos(20, 130)]);
+  }
+  if (clicks >= 200 && multiplier === 5) {
+    multiplier = 10;
+    add([text("Bonus Unlocked! x10 Multiplier", { size: 24 }), pos(20, 160)]);
   }
 });
 
@@ -58,13 +99,15 @@ loop(1, () => {
     clicks = 0;
     rebirths++;
     multiplier *= 2;
-    add([text(`Rebirth! Multiplier is now x${multiplier}`, { size: 24 }), pos(20, 140)]);
+    counter.text = `${translations[language].clicks}: 0`;
+    rebirthCounter.text = `${translations[language].rebirths}: ${rebirths}`;
+    add([text(`${translations[language].rebirthMsg} ${multiplier}`, { size: 24 }), pos(20, 190)]);
   }
 });
 
 // Settings Panel
 const settingsPanel = add([
-  rect(200, 100),
+  rect(250, 160),
   pos(20, 200),
   color(100, 100, 150),
   area(),
@@ -72,13 +115,54 @@ const settingsPanel = add([
 ]);
 
 const settingsText = add([
-  text("Settings: Tap to Toggle Sound", { size: 16 }),
+  text(`${translations[language].settings}: On`, { size: 16 }),
   pos(30, 220)
 ]);
 
-let soundOn = true;
+const languageText = add([
+  text(`${translations[language].language}: EN`, { size: 16 }),
+  pos(30, 250)
+]);
+
+const spriteSelectText = add([
+  text(`${translations[language].spriteSelect}`, { size: 16 }),
+  pos(30, 280)
+]);
+
+const spriteCycle = ["coin", "gem", "star"];
+let spriteIndex = 0;
+
+spriteSelectText.onClick(() => {
+  spriteIndex = (spriteIndex + 1) % spriteCycle.length;
+  currentSprite = spriteCycle[spriteIndex];
+  destroy(clicker);
+  clicker = add([
+    sprite(currentSprite),
+    pos(center()),
+    scale(2),
+    area(),
+    "clickable"
+  ]);
+  clicker.onClick(() => {
+    clicks += 1 * multiplier;
+    if (soundOn) play("click");
+    clicker.scale = vec2(2.2);
+    wait(0.1, () => clicker.scale = vec2(2));
+    counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
+  });
+});
+
 settingsPanel.onClick(() => {
   soundOn = !soundOn;
-  play("click", { volume: soundOn ? 1 : 0 });
-  settingsText.text = `Sound: ${soundOn ? "On" : "Off"}`;
+  settingsText.text = `${translations[language].settings}: ${soundOn ? "On" : "Off"}`;
+});
+
+// Language toggle
+languageText.onClick(() => {
+  language = language === "en" ? "es" : "en";
+  counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
+  rebirthCounter.text = `${translations[language].rebirths}: ${rebirths}`;
+  settingsText.text = `${translations[language].settings}: ${soundOn ? "On" : "Off"}`;
+  languageText.text = `${translations[language].language}: ${language.toUpperCase()}`;
+  spriteSelectText.text = `${translations[language].spriteSelect}`;
 });
