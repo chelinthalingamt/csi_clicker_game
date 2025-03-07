@@ -45,11 +45,13 @@ const translations = {
 const counter = add([
   text(`${translations[language].clicks}: 0`, { size: 32 }),
   pos(20, 20),
+  z(2)
 ]);
 
 const rebirthCounter = add([
   text(`${translations[language].rebirths}: 0`, { size: 24 }),
   pos(20, 60),
+  z(2)
 ]);
 
 // Clickable sprite
@@ -58,7 +60,8 @@ let clicker = add([
   pos(center()),
   scale(2),
   area(),
-  "clickable"
+  "clickable",
+  z(2)
 ]);
 
 // Format numbers for large scales
@@ -69,27 +72,30 @@ function formatNumber(num) {
 }
 
 // Click event
-clicker.onClick(() => {
-  clicks += 1 * multiplier;
-  if (soundOn) play("click");
-  clicker.scale = vec2(2.2);
-  wait(0.1, () => clicker.scale = vec2(2));
-  counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
-});
+function updateClicker() {
+  clicker.onClick(() => {
+    clicks += 1 * multiplier;
+    if (soundOn) play("click");
+    clicker.scale = vec2(2.2);
+    wait(0.1, () => clicker.scale = vec2(2));
+    counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
+  });
+}
+updateClicker();
 
 // Unlock system (additional upgrades at 100 and 200 clicks)
 loop(1, () => {
   if (clicks >= 50 && multiplier === 1) {
     multiplier = 2;
-    add([text(translations[language].bonus, { size: 24 }), pos(20, 100)]);
+    add([text(translations[language].bonus, { size: 24 }), pos(20, 100), z(2)]);
   }
   if (clicks >= 100 && multiplier === 2) {
     multiplier = 5;
-    add([text("Bonus Unlocked! x5 Multiplier", { size: 24 }), pos(20, 130)]);
+    add([text("Bonus Unlocked! x5 Multiplier", { size: 24 }), pos(20, 130), z(2)]);
   }
   if (clicks >= 200 && multiplier === 5) {
     multiplier = 10;
-    add([text("Bonus Unlocked! x10 Multiplier", { size: 24 }), pos(20, 160)]);
+    add([text("Bonus Unlocked! x10 Multiplier", { size: 24 }), pos(20, 160), z(2)]);
   }
 });
 
@@ -101,7 +107,7 @@ loop(1, () => {
     multiplier *= 2;
     counter.text = `${translations[language].clicks}: 0`;
     rebirthCounter.text = `${translations[language].rebirths}: ${rebirths}`;
-    add([text(`${translations[language].rebirthMsg} ${multiplier}`, { size: 24 }), pos(20, 190)]);
+    add([text(`${translations[language].rebirthMsg} ${multiplier}`, { size: 24 }), pos(20, 190), z(2)]);
   }
 });
 
@@ -111,28 +117,29 @@ const settingsPanel = add([
   pos(20, 200),
   color(100, 100, 150),
   area(),
-  "settings"
+  opacity(0.8),
+  z(1)
 ]);
 
 const settingsText = add([
   text(`${translations[language].settings}: On`, { size: 16 }),
   pos(30, 220),
   area(),
-  z(1),
+  z(2)
 ]);
 
 const languageText = add([
   text(`${translations[language].language}: EN`, { size: 16 }),
   pos(30, 250),
   area(),
-  z(1),
+  z(2)
 ]);
 
 const spriteSelectText = add([
   text(`${translations[language].spriteSelect}`, { size: 16 }),
   pos(30, 280),
   area(),
-  z(1),
+  z(2)
 ]);
 
 const spriteCycle = ["coin", "gem", "star"];
@@ -147,15 +154,10 @@ spriteSelectText.onClick(() => {
     pos(center()),
     scale(2),
     area(),
-    "clickable"
+    "clickable",
+    z(2)
   ]);
-  clicker.onClick(() => {
-    clicks += 1 * multiplier;
-    if (soundOn) play("click");
-    clicker.scale = vec2(2.2);
-    wait(0.1, () => clicker.scale = vec2(2));
-    counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
-  });
+  updateClicker();
 });
 
 settingsText.onClick(() => {
