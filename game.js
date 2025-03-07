@@ -105,7 +105,7 @@ loop(1, () => {
   }
 });
 
-// Settings Panel (Background rectangle)
+// Settings Panel
 const settingsPanel = add([
   rect(250, 160),
   pos(20, 200),
@@ -114,31 +114,30 @@ const settingsPanel = add([
   "settings"
 ]);
 
-// Sound Toggle Text
 const settingsText = add([
   text(`${translations[language].settings}: On`, { size: 16 }),
   pos(30, 220),
   area(),
+  z(1),
 ]);
 
-// Language Toggle Text
 const languageText = add([
   text(`${translations[language].language}: EN`, { size: 16 }),
   pos(30, 250),
-  area(), // Added area() to make it clickable
+  area(),
+  z(1),
 ]);
 
-// Sprite Selection Text
 const spriteSelectText = add([
   text(`${translations[language].spriteSelect}`, { size: 16 }),
   pos(30, 280),
-  area(), // Added area() to make it clickable
+  area(),
+  z(1),
 ]);
 
 const spriteCycle = ["coin", "gem", "star"];
 let spriteIndex = 0;
 
-// Change sprite on click
 spriteSelectText.onClick(() => {
   spriteIndex = (spriteIndex + 1) % spriteCycle.length;
   currentSprite = spriteCycle[spriteIndex];
@@ -159,13 +158,11 @@ spriteSelectText.onClick(() => {
   });
 });
 
-// Toggle sound on settings panel click
-settingsPanel.onClick(() => {
+settingsText.onClick(() => {
   soundOn = !soundOn;
   settingsText.text = `${translations[language].settings}: ${soundOn ? "On" : "Off"}`;
 });
 
-// Toggle language on languageText click
 languageText.onClick(() => {
   language = language === "en" ? "es" : "en";
   counter.text = `${translations[language].clicks}: ${formatNumber(clicks)}`;
