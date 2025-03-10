@@ -7,8 +7,8 @@ kaboom({
 
 // Load assets
 loadSprite("coin", "https://i.imgur.com/wbKxhcd.png");
-loadSprite("gem", "https://i.imgur.com/eT9nZ5K.png");
-loadSprite("star", "https://i.imgur.com/4Q43lX5.png");
+loadSprite("gem", "https://i.imgur.com/N5uCbDu.png");
+loadSprite("star", "https://i.imgur.com/VgG2seZ.png");
 loadSound("click", "https://freesound.org/data/previews/123/123442_512123-lq.mp3");
 
 // Game state
