@@ -7,8 +7,7 @@ kaboom({
 
 // Load assets
 loadSprite("coin", "https://i.imgur.com/wbKxhcd.png");
-loadSprite("gem", "https://i.imgur.com/N5uCbDu.png");
-loadSprite("star", "https://i.imgur.com/VgG2seZ.png");
+loadSprite("star", "https://i.imgur.com/olM72b8.png");
 loadSound("click", "https://freesound.org/data/previews/123/123442_512123-lq.mp3");
 
 // Game state
@@ -142,7 +141,7 @@ const spriteSelectText = add([
   z(2)
 ]);
 
-const spriteCycle = ["coin", "gem", "star"];
+const spriteCycle = ["coin", "str"];
 let spriteIndex = 0;
 
 spriteSelectText.onClick(() => {
