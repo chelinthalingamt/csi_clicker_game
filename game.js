@@ -57,7 +57,7 @@ const rebirthCounter = add([
 let clicker = add([
   sprite(currentSprite),
   pos(center()),
-  scale(2),
+  scale(3),
   area(),
   "clickable",
   z(2),
@@ -94,7 +94,7 @@ loop(1, () => {
       destroyAll("bonusText");
       add([
         text(`${translations[language].bonus}${multiplier} Multiplier`, { size: 24 }),
-        pos(20, 100 + i * 30),
+        pos(20, 100),
         z(2),
         "bonusText",
       ]);
