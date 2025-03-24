@@ -115,7 +115,7 @@ loop(1, () => {
     destroyAll("bonusText");
     add([
       text(`${translations[language].rebirthMsg} ${multiplier}`, { size: 24 }),
-      pos(20, 190),
+      pos(20, 100),
       z(2),
       "bonusText",
     ]);
